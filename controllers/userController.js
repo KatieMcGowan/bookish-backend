@@ -1,4 +1,5 @@
 const db = require("../models");
+const bcrypt = require("bcrypt")
 
 const index = (req, res) => {
   db.User.find({}, (err, foundUsers) => {
@@ -21,11 +22,31 @@ const show = (req, res) => {
 };
 
 const create = (req, res) => {
-  db.User.create(req.body, (err, savedUser) => {
-    if (err) console.log("Error with User create", err)
-    res.status(201).json({user: savedUser})
-  });
-};
+  bcrypt.hash(req.body.password, 10)
+  .then((hashedPassword) => {
+    db.User.create({
+      username: req.body.username,
+      password: hashedPassword
+    })
+    .then((result) => {
+      res.status(201).send({
+        message: "User created successfully",
+        result,
+      });
+    })
+    .catch((error) => {
+      res.status(500).send({
+        message: "Error creating user",
+        error,
+      })
+    })
+  })
+  .catch((e) => {
+    res.status(500).send({
+      message: "Password was not hashed successfully", e,
+    })
+  })
+}
 
 const update = (req, res) => {
   db.User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedUser) => {
