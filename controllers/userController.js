@@ -23,31 +23,42 @@ const show = (req, res) => {
 };
 
 const create = (req, res) => {
-  bcrypt.hash(req.body.password, 10)
-  .then((hashedPassword) => {
-    db.User.create({
-      username: req.body.username,
-      password: hashedPassword
-    })
-    .then((result) => {
-      res.status(201).send({
-        message: "User created successfully",
-        result,
-      });
-    })
-    .catch((error) => {
+  db.User.findOne({username: req.body.username})
+  .then((user) => {
+    if (user) {
       res.status(500).send({
-        message: "Error creating user",
-        error,
+        errorcode: 1
       })
-    })
+      return;
+    } else {
+      bcrypt.hash(req.body.password, 10)
+      .then((hashedPassword) => {
+        db.User.create({
+          displayname: req.body.displayname,
+          username: req.body.username,
+          password: hashedPassword
+        })
+        .then((result) => {
+          res.status(201).send({
+            message: "User created successfully",
+            result,
+          });
+        })
+        .catch((error) => {
+          res.status(500).send({
+            message: "Error creating user",
+            error,
+          })
+        })
+      })
+      .catch((e) => {
+        res.status(500).send({
+          message: "Password was not hashed successfully", e,
+        })
+      })
+    }
   })
-  .catch((e) => {
-    res.status(500).send({
-      message: "Password was not hashed successfully", e,
-    })
-  })
-}
+}    
 
 const verify = (req, res) => {
   db.User.findOne({ username: req.body.username })
