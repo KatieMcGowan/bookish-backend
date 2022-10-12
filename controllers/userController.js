@@ -1,5 +1,6 @@
 const db = require("../models");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const index = (req, res) => {
   db.User.find({}, (err, foundUsers) => {
@@ -48,6 +49,54 @@ const create = (req, res) => {
   })
 }
 
+const verify = (req, res) => {
+  db.User.findOne({ username: req.body.username })
+  .then((user) => {
+    bcrypt.compare(req.body.password, user.password)
+    .then((passwordCheck) => {
+      if(!passwordCheck) {
+        return res.status(400).send({
+          message: "Passwords do not match",
+          error,
+        })
+      }
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          userName: user.username
+        },
+        "RANDOM-TOKEN", 
+        { expiresIn: "24h" }
+      )
+      res.status(200).send({
+        message: "Login successful",
+        username: user.username,
+        token,
+      })
+    })
+    .catch((error) => {
+      res.status(400).send({
+        message: "Passwords do not match",
+        error,
+      })
+    })
+  })
+  .catch((e) => {
+    res.status(404).send({
+      message: "Username not found",
+      e,
+    })
+  })
+}
+
+const freeEndpoint = (req, res) => {
+  res.json({ message: "Free access" })
+}
+
+const authEndpoint = (req, res) => {
+  res.json({ message: "Authorized access" })
+}
+
 const update = (req, res) => {
   db.User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedUser) => {
     if (err) console.log("Error in User update", err)
@@ -60,4 +109,7 @@ module.exports = {
   show,
   create,
   update,
+  verify,
+  freeEndpoint,
+  authEndpoint,
 }
