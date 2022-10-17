@@ -21,15 +21,25 @@ const show = (req, res) => {
 };
 
 const create = (req, res) => {
-  db.Club.create(req.body, (err, savedClub) => {
-    if (err) console.log("Error with Club create", err)
-    db.User.findById(req.body.admin, (err, foundUser) => {
-      foundUser.clubsadmin.push(savedClub);
-      foundUser.save((err, savedUser) => {
-        res.status(201).json({club: savedClub})
+  db.Club.findOne({clubname: req.body.clubname})
+  .then((club) => {
+    if (club) {
+      res.status(500).send({
+        errorcode: 1
+      })
+      return;
+    } else {
+      db.Club.create(req.body, (err, savedClub) => {
+        if (err) console.log("Error with Club create", err)
+        db.User.findById(req.body.admin, (err, foundUser) => {
+          foundUser.clubsadmin.push(savedClub);
+          foundUser.save((err, savedUser) => {
+            res.status(201).json({club: savedClub})
+          });
+        });
       });
-    });
-  });
+    };
+  });    
 };
 
 const update = (req, res) => {
