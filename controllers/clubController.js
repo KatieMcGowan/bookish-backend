@@ -22,11 +22,10 @@ const show = (req, res) => {
 
 const create = (req, res) => {
   db.Club.create(req.body, (err, savedClub) => {
-    console.log(savedClub)
     if (err) console.log("Error with Club create", err)
-    db.User.findById(req.body.user, (err, foundUser) => {
-      foundUser.Clubs.push(savedClub);
-      foundUser.save((err, savedClub) => {
+    db.User.findById(req.body.admin, (err, foundUser) => {
+      foundUser.clubsadmin.push(savedClub);
+      foundUser.save((err, savedUser) => {
         res.status(201).json({club: savedClub})
       });
     });

@@ -67,7 +67,7 @@ const verify = (req, res) => {
     .then((passwordCheck) => {
       if(!passwordCheck) {
         return res.status(400).send({
-          message: "Passwords do not match",
+          message: "Passwords do not match, password check failed",
           error,
         })
       }
@@ -81,15 +81,17 @@ const verify = (req, res) => {
       )
       res.status(200).send({
         message: "Login successful",
-        username: user.username,
+        id: user.id,
         token,
       })
     })
     .catch((error) => {
       res.status(400).send({
-        message: "Passwords do not match",
+        errorcode: 1,
+        message: "Passwords do not match, password check surpassed",
         error,
       })
+      console.log(error);
     })
   })
   .catch((e) => {
