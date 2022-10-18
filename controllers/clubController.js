@@ -10,6 +10,27 @@ const index = (req, res) => {
   });
 };
 
+
+const adminshow = (req, res) => {
+  db.Club.find({admin: req.params.id}, (err, foundClubs) => {
+    if (err) console.log("Error with admin show", err)
+    if (!foundClubs) return res.json({
+      message: "Admin clubs not found in database"
+    });
+    res.status(200).json({clubs: foundClubs})
+  });
+};
+
+const membershow = (req, res) => {
+  db.Club.find({members: req.params.id}, (err, foundClubs) => {
+    if (err) console.log("Error with admin show", err)
+    if (!foundClubs) return res.json({
+      message: "Member clubs not found in database"
+    });
+    res.status(200).json({clubs: foundClubs})
+  });
+};
+
 const show = (req, res) => {
   db.Club.findById(req.params.id, (err, foundClub) => {
     if (err) console.log("Error with Club show");
@@ -64,6 +85,8 @@ const destroy = (req, res) => {
 module.exports = {
   index,
   show,
+  adminshow,
+  membershow,
   create,
   update,
   destroy,
