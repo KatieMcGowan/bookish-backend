@@ -102,6 +102,21 @@ const verify = (req, res) => {
   })
 }
 
+const getid = (req, res) => {
+  let decoded = jwt.decode(req.body.token)
+  if (!decoded.userId) {
+    res.status(500).send({
+      message: "JWT not verified",
+      error,
+    })
+  } else {
+    res.status(200).send({
+      message: "JWT verified",
+      decodedId: decoded.userId
+    }); 
+  };
+};  
+
 const freeEndpoint = (req, res) => {
   res.json({ message: "Free access" })
 }
@@ -123,6 +138,7 @@ module.exports = {
   create,
   update,
   verify,
+  getid,
   freeEndpoint,
   authEndpoint,
 }
