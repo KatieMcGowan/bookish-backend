@@ -1,6 +1,7 @@
 const db = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const config = require("../config")
 
 const index = (req, res) => {
   db.User.find({}, (err, foundUsers) => {
@@ -11,6 +12,20 @@ const index = (req, res) => {
     res.status(200).json({users: foundUsers})
   });
 };
+
+const getid = (req, res) => {
+  let token = req.body.token
+  console.log(token)
+  if (!token) {
+    return res.status(401).send({auth: false, message: "No token provided."})
+  }  
+  jwt.verify(token, config.secret, (err, decoded) => {
+    if (err) {
+      return res.status(500).send({auth: false, message: "Failed to authenticate token."})
+    }  
+    res.status(200).send(decoded)
+  })
+}
 
 const show = (req, res) => {
   db.User.findById(req.params.id, (err, foundUser) => {
@@ -76,7 +91,7 @@ const verify = (req, res) => {
           userId: user._id,
           userName: user.username
         },
-        "RANDOM-TOKEN", 
+        config.secret, 
         { expiresIn: "24h" }
       )
       res.status(200).send({
@@ -101,21 +116,6 @@ const verify = (req, res) => {
     })
   })
 }
-
-const getid = (req, res) => {
-  let decoded = jwt.decode(req.body.token)
-  if (!decoded.userId) {
-    res.status(500).send({
-      message: "JWT not verified",
-      error,
-    })
-  } else {
-    res.status(200).send({
-      message: "JWT verified",
-      decodedId: decoded.userId
-    }); 
-  };
-};  
 
 const freeEndpoint = (req, res) => {
   res.json({ message: "Free access" })

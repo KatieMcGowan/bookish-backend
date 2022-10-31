@@ -5,10 +5,11 @@ const auth = require("../auth")
 router.get("/", ctrl.users.index);
 router.get("/free-endpoint", ctrl.users.freeEndpoint)
 router.get("/auth-endpoint", auth, ctrl.users.authEndpoint)
+// router.get("/getid", ctrl.users.getid)
+router.post("/getid", ctrl.users.getid)
 router.get("/:id", ctrl.users.show);
 router.post("/", ctrl.users.create);
 router.post("/login", ctrl.users.verify)
-router.get("/getid", ctrl.users.getid)
 router.put("/:id", ctrl.users.update);
 
 module.exports = router;
