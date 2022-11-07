@@ -15,7 +15,6 @@ const index = (req, res) => {
 
 const getid = (req, res) => {
   let token = req.body.token
-  console.log(token)
   if (!token) {
     return res.status(401).send({auth: false, message: "No token provided."})
   }  
