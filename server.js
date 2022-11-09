@@ -13,6 +13,7 @@ app.use(cors());
 //ROUTES
 app.use("/users", routes.users)
 app.use("/clubs", routes.clubs)
+app.use("/books", routes.books)
 
 //CORS
 app.use((req, res, next) => {

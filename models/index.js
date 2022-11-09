@@ -13,4 +13,5 @@ mongoose.connect(connectionString, configOptions)
 module.exports = ({
   User: require("./User"),
   Club: require("./Club"),
+  Book: require("./Book"),
 })

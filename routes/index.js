@@ -1,4 +1,5 @@
 module.exports = {
   users: require("./userRoutes"),
-  clubs: require("./clubRoutes")
+  clubs: require("./clubRoutes"),
+  books: require("./bookRoutes"),
 }
