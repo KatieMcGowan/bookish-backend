@@ -7,13 +7,11 @@ const ClubSchema = new Schema({
   meetup: String,
   admin: { type: Schema.Types.ObjectId, ref: "User" },
   members: [ { type: Schema.Types.ObjectId, ref: "User" } ],
-  // invitedmembers: [ { type: Schema.Types.ObjectId, ref: "User" } ],
-  // usersrequestedinvite: [ { type: Schema.Types.ObjectId, ref: "User" } ],
-  currentbook: { type: Schema.Types.ObjectId, ref: "Book" },
-  // pastbooks: [ String ],
-  questions: [ String ],
-  userscompleted: [ { type: Schema.Types.ObjectId, ref: "User"} ],
   newbook: Boolean,
+  currentbook: { type: Schema.Types.ObjectId, ref: "Book" },
+  pastbooks: [ { type: Schema.Types.ObjectId, ref: "Book" } ],
+  questions: [ { type: String } ],
+  userscompleted: [ { type: Schema.Types.ObjectId, ref: "User"} ],
   nominations: [ { type: Schema.Types.ObjectId, ref: "Book" } ],
 })
 

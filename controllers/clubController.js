@@ -10,46 +10,6 @@ const index = (req, res) => {
   });
 };
 
-
-const adminshow = (req, res) => {
-  db.Club.find({admin: req.params.id}, (err, foundClubs) => {
-    if (err) console.log("Error with admin show", err)
-    if (!foundClubs) return res.json({
-      message: "Admin clubs not found in database"
-    });
-    res.status(200).json({clubs: foundClubs})
-  });
-};
-
-const membershow = (req, res) => {
-  db.Club.find({members: req.params.id}, (err, foundClubs) => {
-    if (err) console.log("Error with admin show", err)
-    if (!foundClubs) return res.json({
-      message: "Member clubs not found in database"
-    });
-    res.status(200).json({clubs: foundClubs})
-  });
-};
-
-const sortclubs = (req, res) => {
-  db.Club.find({}, (err, foundClubs) => {
-    if (err) console.log("Error with sorting clubs")
-    db.User.findById(req.params.id, (err, foundUser) => {
-      if (err) console.log("Error with sort clubs");
-      if (!foundUser) return res.json({
-        message: "User not found"
-      });
-    })
-  });
-};
-
-//Iterating over admin, members, usersrequestedinvite, and invitedmembers. 
-//Maybe step-by-step, if not admin, then remaining clubs go through members loop,
-//Then if not member, goes through usersrequestedinvite
-//If not user requested invite, then goes through invited member
-
-
-
 const show = (req, res) => {
   db.Club.findById(req.params.id, (err, foundClub) => {
     if (err) console.log("Error with Club show");
@@ -83,59 +43,53 @@ const create = (req, res) => {
 };
 
 const update = (req, res) => {
-  db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
-    if (err) console.log("Error in Club update", err)
-    res.status(200).json({club: updatedClub})
-  });
+  db.Club.findOne({clubname: req.body.clubname})
+  .then((club) => {
+    if (club) {
+      res.status(500).send({
+        errorcode: 1
+      })
+      return;
+    } else {  
+      db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
+        if (err) console.log("Error in Club update", err)
+        res.status(200).json({club: updatedClub})
+      });
+    };
+  });  
 };
 
-const addquestion = (req, res) => {
+const updateArray = (req, res) => {
   db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with add question")
-    foundClub.questions.push(req.body.question);
-    foundClub.save((err, savedClub) => {
-      res.status(200).json({club: savedClub})
-    });
-  });
-};
-
-const finishbook = (req, res) => {
-  db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with finish book")
-    foundClub.userscompleted.push(req.body.usercompleted);
-    foundClub.save((err, savedClub) => {
-      res.status(200).json({club: savedClub})
-    });
-  });
-};
-
-const nominatebook = (req, res) => {
-  db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with nominate book")
-    foundClub.nominations.push(req.body.nominated);
-    foundClub.save((err, savedClub) => {
-      res.status(200).json({club: savedClub})
-    });
-  });
-};
-
-const initiatevote = (req, res) => {
-  db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with initiate vote")
-    foundClub.newbook = req.body.newbook
-    foundClub.save((err, savedClub) => {
-      res.status(200).json({club: savedClub})
-    });
-  });
-};
-
-const requestinvite = (req, res) => {
-  db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with request invite");
-    foundClub.usersrequestedinvite.push(req.body.requestee);
-    foundClub.save((err, savedClub) => {
-      res.status(200).json({club: savedClub})
-    });
+    if (err) console.log("Error with update array")
+    if ("member" in req.body) {
+      foundClub.members.push(req.body.member)
+      foundClub.save((err, savedClub) => {
+        res.status(200).json({club: savedClub})
+      })
+    } else if ("pastbook" in req.body) {
+      foundClub.pastbooks.push(req.body.pastbook)
+      foundClub.save((err, savedClub) => {
+        res.status(200).json({club: savedClub})
+      })
+    } else if ("question" in req.body) {
+      foundClub.questions.push(req.body.question)
+      foundClub.save((err, savedClub) => {
+        res.status(200).json({club: savedClub})
+      })
+    } else if ("usercompleted" in req.body) {
+      foundClub.userscompleted.push(req.body.usercompleted)
+      // console.log(foundClub);
+      foundClub.save((err, savedClub) => {
+        if (err) console.log(err)
+        res.status(200).json({club: savedClub})
+      })
+    } else if ("nomination" in req.body) {
+      foundClub.nominations.push(req.body.nomination)
+      foundClub.save((err, savedClub) => {
+        res.status(200).json({club: savedClub})
+      });
+    };
   });
 };
 
@@ -155,14 +109,7 @@ module.exports = {
   index,
   create,
   show,
-  adminshow,
-  membershow,
-  requestinvite,
-  sortclubs,
   update,
-  addquestion,
-  finishbook,
-  nominatebook,
-  initiatevote,
+  updateArray,
   destroy,
 };
