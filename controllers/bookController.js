@@ -14,7 +14,7 @@ const show = (req, res) => {
   db.Book.findById(req.params.id, (err, foundBook) => {
     if (err) console.log("Error with Book show");
     if (!foundBook) return res.json({
-      message: "User not found in database"
+      message: "Book not found in database"
     });
     res.status(200).json({book: foundBook})
   });
@@ -38,13 +38,13 @@ const update = (req, res) => {
 const destroy = (req, res) => {
   db.Book.findByIdAndDelete(req.params.id, (err, deletedBook) => {
     if (err) console.log("Error with Book delete", err)
-    db.Club.findOne({"currentbook": req.params.id}, (err, foundBook) => {
-      foundClub.currentbook.remove(req.params.id);
-      foundClub.save((err, updatedClub) => {
+    // db.Club.findOne({"currentbook": req.params.id}, (err, foundBook) => {
+    //   foundClub.currentbook.remove(req.params.id);
+    //   foundClub.save((err, updatedClub) => {
         res.status(200).json({book: deletedBook})
       });
-    });
-  });
+  //   });
+  // });
 };
 
 module.exports = {
