@@ -33,6 +33,7 @@ const create = (req, res) => {
         if (err) console.log("Error with Club create", err)
         db.User.findById(req.body.admin, (err, foundUser) => {
           foundUser.clubsadmin.push(savedClub);
+          foundUser.clubsmember.push(savedClub);
           foundUser.save((err, savedUser) => {
             res.status(201).json({club: savedClub})
           });
@@ -60,6 +61,7 @@ const update = (req, res) => {
 };
 
 const updateArray = (req, res) => {
+  console.log(req.body)
   db.Club.findById(req.params.id, (err, foundClub) => {
     if (err) console.log("Error with update array")
     if ("member" in req.body) {
@@ -79,7 +81,6 @@ const updateArray = (req, res) => {
       })
     } else if ("usercompleted" in req.body) {
       foundClub.userscompleted.push(req.body.usercompleted)
-      // console.log(foundClub);
       foundClub.save((err, savedClub) => {
         if (err) console.log(err)
         res.status(200).json({club: savedClub})

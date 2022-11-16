@@ -131,6 +131,23 @@ const update = (req, res) => {
   });
 };
 
+const updateArray = (req, res) => {
+  db.User.findById(req.params.id, (err, foundUser) => {
+    if (err) console.log("Error with User update array")
+    if ("clubadmin" in req.body) {
+      foundUser.clubsadmin.push(req.body.clubadmin)
+      foundUser.save((err, savedUser) => {
+        res.status(200).json({user: savedUser})
+      })
+    } else if ("clubmember" in req.body) {
+      foundUser.clubsmember.push(req.body.clubmember)
+      foundUser.save((err, savedUser) => {
+        res.status(200).json({user: savedUser})
+      });
+    };
+  });
+};
+
 module.exports = {
   index,
   show,

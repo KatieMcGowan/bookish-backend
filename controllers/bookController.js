@@ -20,6 +20,32 @@ const show = (req, res) => {
   });
 };
 
+const searchTitle = (req, res) => {
+  // let strippedPunctuation = req.query.title.replace(/[^a-z]/g, "")
+  // console.log(strippedPunctuation)
+  let modifiedTitle = new RegExp(req.query.title, "i");
+  db.Book.findOne({title: modifiedTitle}, (err, foundBook) => {
+    if (err) console.log("Error with Book search", err);
+    if (foundBook) {
+      res.status(200).json({book: foundBook});
+    } else if (!foundBook) return res.json({
+      message: "Search: Book not found in the database"
+    })
+  });
+};
+
+const searchAuthor = (req, res) => {
+  let modifiedAuthor = new RegExp(req.query.author, "i")
+  db.Book.findOne({author: modifiedAuthor}, (err, foundBook) => {
+    if (err) console.log("Error with Book search", err);
+    if (foundBook) {
+      res.status(200).json({book: foundBook});
+    } else if (!foundBook) return res.json({
+      message: "Search: Book not found in the database"
+    })
+  });
+};
+
 const create = (req, res) => {
   db.Book.create(req.body, (err, savedBook) => {
     if (err) console.log("Error with Book create", err)
@@ -51,6 +77,10 @@ module.exports = {
   index,
   create,
   show,
+  searchTitle,
+  searchAuthor,
   update,
   destroy,
 };
+
+//Search parameters have to be non-case sensitive. Everything to lower case?
