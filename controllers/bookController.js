@@ -21,28 +21,31 @@ const show = (req, res) => {
 };
 
 const searchTitle = (req, res) => {
-  // let strippedPunctuation = req.query.title.replace(/[^a-z]/g, "")
-  // console.log(strippedPunctuation)
   let modifiedTitle = new RegExp(req.query.title, "i");
-  db.Book.findOne({title: modifiedTitle}, (err, foundBook) => {
+  db.Book.find({title: modifiedTitle}, (err, foundBook) => {
     if (err) console.log("Error with Book search", err);
     if (foundBook) {
       res.status(200).json({book: foundBook});
-    } else if (!foundBook) return res.json({
-      message: "Search: Book not found in the database"
-    })
+    } else if (!foundBook) {
+      return res.json({
+        message: "Search: Book not found in the database",
+        errorcode: 1
+      });
+    };
   });
 };
 
 const searchAuthor = (req, res) => {
   let modifiedAuthor = new RegExp(req.query.author, "i")
-  db.Book.findOne({author: modifiedAuthor}, (err, foundBook) => {
+  db.Book.find({author: modifiedAuthor}, (err, foundBook) => {
     if (err) console.log("Error with Book search", err);
     if (foundBook) {
       res.status(200).json({book: foundBook});
-    } else if (!foundBook) return res.json({
-      message: "Search: Book not found in the database"
-    })
+    } else if (!foundBook) {
+        return res.json({
+        message: "Search: Book not found in the database"
+      });
+    };
   });
 };
 
