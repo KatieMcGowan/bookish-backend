@@ -61,13 +61,18 @@ const update = (req, res) => {
 };
 
 const updateArray = (req, res) => {
-  console.log(req.body)
   db.Club.findById(req.params.id, (err, foundClub) => {
     if (err) console.log("Error with update array")
     if ("member" in req.body) {
-      foundClub.members.push(req.body.member)
-      foundClub.save((err, savedClub) => {
-        res.status(200).json({club: savedClub})
+      db.User.findById(req.body.member, (err, foundUser) => {
+        foundUser.clubsmember.push(req.params.id)
+        foundUser.save((err, savedUser) => {
+          res.status(200).json({user: savedUser})
+        });
+        foundClub.members.push(req.body.member)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
       })
     } else if ("pastbook" in req.body) {
       foundClub.pastbooks.push(req.body.pastbook)

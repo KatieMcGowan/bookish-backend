@@ -88,7 +88,8 @@ const verify = (req, res) => {
       const token = jwt.sign(
         {
           userId: user._id,
-          userName: user.username
+          userName: user.username,
+          userDisplayName: user.displayname
         },
         config.secret, 
         { expiresIn: "24h" }
@@ -111,6 +112,7 @@ const verify = (req, res) => {
   .catch((e) => {
     res.status(404).send({
       message: "Username not found",
+      errorcode: 1,
       e,
     })
   })
