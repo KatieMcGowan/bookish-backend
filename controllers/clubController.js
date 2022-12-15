@@ -73,15 +73,6 @@ const updateArray = (req, res) => {
           res.status(200).json({club: savedClub})
         });
       })
-      //   foundUser.clubsmember.push(req.params.id)
-      //   foundUser.save((err, savedUser) => {
-      //     res.status(200).json({user: savedUser})
-      //   });
-      //   foundClub.members.push(req.body.member)
-      //   foundClub.save((err, savedClub) => {
-      //     res.status(200).json({club: savedClub})
-      //   });
-      // })
     } else if ("pastbook" in req.body) {
       foundClub.pastbooks.push(req.body.pastbook)
       foundClub.save((err, savedClub) => {
@@ -107,38 +98,23 @@ const updateArray = (req, res) => {
   });
 };
 
-//only question works, nomination and member do not
-//can't res send more than one status point
 const deleteFromArray = (req, res) => {
-  db.Club.findById(req.params.id, (err, foundClub) => {
-    if (err) console.log("Error with delete from array")
-    if ("member" in req.body) {
-      db.User.findById(req.body.member, (err, foundUser) => {
-        foundUser.clubsmember = foundUser.clubsmember.filter(clubsmember => clubsmember !== req.params.id)
-        foundClub.members = foundClub.members.filter(member => member !== req.body.member)
-        foundClub.save();
-        foundUser.save((err, savedUser) => {
-          res.status(200).json({user: savedUser})
-        });
-        // foundClub.save((err, savedClub) => {
-        //   res.status(200).json({club: savedClub})
-        // });
-      })
-    } else if ("question" in req.body) {
-      foundClub.questions = foundClub.questions.filter(question => question !== req.body.question)
-      foundClub.save((err, savedClub) => {
-        res.status(200).json({club: savedClub})
-      })
-    } else if ("nomination" in req.body) {
-      console.log("in the nomination path")
-      foundClub.nominations = foundClub.nominations.filter(nomination => nomination !== req.body.nomination)
-      foundClub.save((err, savedClub) => {
-        if (err) console.log(err)
-        res.status(200).json({club: savedClub})
-      })
-    };
-  })
-}
+  if ("member" in req.body) {
+    db.User.findByIdAndUpdate(req.body.member, {$pull: {"clubsmember": `${req.params.id}`}}, {new: true}, (err, updatedUser) => {
+      db.Club.findByIdAndUpdate(req.params.id, {$pull: {"members": `${req.body.member}`, "userscompleted": `${req.body.member}`}}, {new: true}, (err, updatedClub) => {
+        res.status(200).json({user: updatedUser, club: updatedClub})
+      });
+    });
+  } else if ("question" in req.body) {
+    db.Club.findByIdAndUpdate(req.params.id, {$pull: {"questions": `${req.body.question}`}}, {new: true}, (err, updatedClub) => {
+      res.status(200).json({club: updatedClub})
+    });
+  } else if ("nomination" in req.body) {
+    db.Club.findByIdAndUpdate(req.params.id, {$pull: {"nominations": `${req.body.nomination}`}}, {new: true}, (err, updatedClub) => {
+      res.status(200).json({club: updatedClub})
+    });
+  };  
+};      
 
 const destroy = (req, res) => {
   db.Club.findByIdAndDelete(req.params.id, (err, deletedClub) => {
