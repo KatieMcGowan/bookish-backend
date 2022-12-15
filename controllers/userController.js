@@ -155,6 +155,7 @@ module.exports = {
   show,
   create,
   update,
+  updateArray,
   verify,
   getid,
   freeEndpoint,
