@@ -7,6 +7,6 @@ router.put("/deletefromarray/:id", ctrl.clubs.deleteFromArray)
 router.get("/:id", ctrl.clubs.show);
 router.post("/", ctrl.clubs.create);
 router.put("/:id", ctrl.clubs.update);
-router.delete("/:id", ctrl.books.destroy)
+router.delete("/:id", ctrl.clubs.destroy)
 
 module.exports = router;

@@ -50,11 +50,21 @@ const searchAuthor = (req, res) => {
 };
 
 const create = (req, res) => {
-  db.Book.create(req.body, (err, savedBook) => {
-    if (err) console.log("Error with Book create", err)
-    res.status(201).json({book: savedBook})
+  db.Book.findOne({title: req.body.title, author: req.body.author})
+  .then((book) => {
+    if (book) {
+      res.status(500).send({
+        errorcode: 1
+      })
+      return;
+    } else {
+      db.Book.create(req.body, (err, savedBook) => {
+        if (err) console.log("Error with Book create", err)
+        res.status(201).json({book: savedBook})
+      });
+    };
   });
-}
+};
 
 //These may not be needed
 const update = (req, res) => {
@@ -65,6 +75,7 @@ const update = (req, res) => {
 };
 
 const destroy = (req, res) => {
+  console.log("in the book delete")
   db.Book.findByIdAndDelete(req.params.id, (err, deletedBook) => {
     if (err) console.log("Error with Book delete", err)
     // db.Club.findOne({"currentbook": req.params.id}, (err, foundBook) => {
