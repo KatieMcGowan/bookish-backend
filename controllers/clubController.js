@@ -44,21 +44,27 @@ const create = (req, res) => {
 };
 
 const update = (req, res) => {
-  db.Club.findOne({clubname: req.body.clubname})
-  .then((club) => {
-    if (club) {
-      res.status(500).send({
-        errorcode: 1
-      })
-      return;
-    } else {  
-      db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
-        if (err) console.log("Error in Club update", err)
-        res.status(200).json({club: updatedClub})
-      });
-    };
+  db.Club.findById(req.params.id, (err, paramsClub) => {
+    db.Club.findOne({clubname: req.body.clubname})
+    .then((nameClub) => {
+      const paramsId = String(paramsClub._id)
+      const nameId = String(nameClub._id)
+      if (paramsId!== nameId) {
+        res.status(500).send({
+          errorcode: 1
+        })
+        return;
+      } else {
+        db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
+          if (err) console.log("Error in Club update", err)
+          res.status(200).json({club: updatedClub})
+        });
+      };
+    });
   });  
 };
+
+//Update club under this condition: req.params.id === 
 
 const updateArray = (req, res) => {
   db.Club.findById(req.params.id, (err, foundClub) => {
@@ -118,8 +124,8 @@ const deleteFromArray = (req, res) => {
   };  
 };      
 
+//Doesn't remove from clubsmember
 const destroy = (req, res) => {
-  console.log("In the delete controller")
   db.Club.findByIdAndDelete(req.params.id, (err, deletedClub) => {
     if (err) console.log("Error with Club delete", err)
     db.User.findOne({"clubsadmin": req.params.id}, (err, foundAdmin) => {
@@ -127,10 +133,9 @@ const destroy = (req, res) => {
       foundAdmin.save((err, updatedAdmin) => {
         db.User.find({"clubsmember": req.params.id}, (err, foundMembers) => {
           if (err) console.log("Error with removing club reference from member object");
-          console.log(foundMembers)
           for (let i = 0; i < foundMembers.length; i++) {
             foundMembers[i].clubsmember = foundMembers[i].clubsmember.filter(club => club !== req.params.id)
-            foundMembers[i].save()
+            foundMembers[i].save();
           };
           res.status(200).json({club: deletedClub})
         });
