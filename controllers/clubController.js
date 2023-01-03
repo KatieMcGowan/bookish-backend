@@ -47,13 +47,20 @@ const update = (req, res) => {
   db.Club.findById(req.params.id, (err, paramsClub) => {
     db.Club.findOne({clubname: req.body.clubname})
     .then((nameClub) => {
-      const paramsId = String(paramsClub._id)
-      const nameId = String(nameClub._id)
-      if (paramsId!== nameId) {
-        res.status(500).send({
-          errorcode: 1
-        })
-        return;
+      if (nameClub) {
+        const paramsId = String(paramsClub._id)
+        const nameId = String(nameClub._id)
+        if (paramsId!== nameId) {
+          res.status(500).send({
+            errorcode: 1
+          })
+          return;
+        } else {
+          db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
+            if (err) console.log("Error in Club update", err)
+            res.status(200).json({club: updatedClub})
+          });
+        };
       } else {
         db.Club.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedClub) => {
           if (err) console.log("Error in Club update", err)
