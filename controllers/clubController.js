@@ -64,8 +64,6 @@ const update = (req, res) => {
   });  
 };
 
-//Update club under this condition: req.params.id === 
-
 const updateArray = (req, res) => {
   db.Club.findById(req.params.id, (err, foundClub) => {
     if (err) console.log("Error with update array")
@@ -134,8 +132,9 @@ const destroy = (req, res) => {
         db.User.find({"clubsmember": req.params.id}, (err, foundMembers) => {
           if (err) console.log("Error with removing club reference from member object");
           for (let i = 0; i < foundMembers.length; i++) {
-            foundMembers[i].clubsmember = foundMembers[i].clubsmember.filter(club => club !== req.params.id)
-            foundMembers[i].save();
+            db.User.findByIdAndUpdate(foundMembers[i]._id, {$pull: {"clubsmember": `${req.params.id}`}}, {new: true}, (err, updatedUser) => {
+              if (err) console.log(err)
+            });
           };
           res.status(200).json({club: deletedClub})
         });
