@@ -37,7 +37,8 @@ const show = (req, res) => {
 };
 
 const create = (req, res) => {
-  db.User.findOne({username: req.body.username})
+  let lowerCaseUser = req.body.username.toLowerCase()
+  db.User.findOne({username: lowerCaseUser})
   .then((user) => {
     if (user) {
       res.status(500).send({
@@ -49,7 +50,7 @@ const create = (req, res) => {
       .then((hashedPassword) => {
         db.User.create({
           displayname: req.body.displayname,
-          username: req.body.username,
+          username: lowerCaseUser,
           password: hashedPassword
         })
         .then((result) => {
@@ -75,7 +76,8 @@ const create = (req, res) => {
 }    
 
 const verify = (req, res) => {
-  db.User.findOne({ username: req.body.username })
+  let lowerCaseUser = req.body.username.toLowerCase()
+  db.User.findOne({ username: lowerCaseUser })
   .then((user) => {
     bcrypt.compare(req.body.password, user.password)
     .then((passwordCheck) => {
