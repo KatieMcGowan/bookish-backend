@@ -89,10 +89,25 @@ const updateArray = (req, res) => {
         res.status(200).json({club: savedClub})
       })
     } else if ("question" in req.body) {
-      foundClub.questions.push(req.body.question)
-      foundClub.save((err, savedClub) => {
-        res.status(200).json({club: savedClub})
-      })
+      if (foundClub.questions.length > 0) {
+        for (let i = 0; i < foundClub.questions.length; i++) {
+          if (foundClub.questions[i] === req.body.question) {
+            res.status(500).send({
+              errorcode: 1
+            });
+            return;
+          } ;
+        };
+        foundClub.questions.push(req.body.question)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
+      } else {
+        foundClub.questions.push(req.body.question)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
+      };
     } else if ("usercompleted" in req.body) {
       foundClub.userscompleted.push(req.body.usercompleted)
       foundClub.save((err, savedClub) => {
@@ -100,10 +115,29 @@ const updateArray = (req, res) => {
         res.status(200).json({club: savedClub})
       })
     } else if ("nomination" in req.body) {
-      foundClub.nominations.push(req.body.nomination)
-      foundClub.save((err, savedClub) => {
-        res.status(200).json({club: savedClub})
-      });
+      if (foundClub.nominations.length > 0) {
+        for (let i = 0; i < foundClub.nominations.length; i++) {
+          if (foundClub.nominations[i] === req.body.nomination) {
+            res.status(500).send({
+              errorcode: 1
+            });
+            return;
+          } ;
+        };
+        foundClub.nominations.push(req.body.nomination)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
+      } else {
+        foundClub.nominations.push(req.body.nominations)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
+      };
+      // foundClub.nominations.push(req.body.nomination)
+      // foundClub.save((err, savedClub) => {
+      //   res.status(200).json({club: savedClub})
+      // });
     };
   });
 };
