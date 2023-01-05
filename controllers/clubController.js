@@ -117,7 +117,8 @@ const updateArray = (req, res) => {
     } else if ("nomination" in req.body) {
       if (foundClub.nominations.length > 0) {
         for (let i = 0; i < foundClub.nominations.length; i++) {
-          if (foundClub.nominations[i] === req.body.nomination) {
+          let stringNomination = String(foundClub.nominations[i])
+          if (stringNomination === req.body.nomination) {
             res.status(500).send({
               errorcode: 1
             });
@@ -129,15 +130,11 @@ const updateArray = (req, res) => {
           res.status(200).json({club: savedClub})
         });
       } else {
-        foundClub.nominations.push(req.body.nominations)
+        foundClub.nominations.push(req.body.nomination)
         foundClub.save((err, savedClub) => {
           res.status(200).json({club: savedClub})
         });
       };
-      // foundClub.nominations.push(req.body.nomination)
-      // foundClub.save((err, savedClub) => {
-      //   res.status(200).json({club: savedClub})
-      // });
     };
   });
 };
