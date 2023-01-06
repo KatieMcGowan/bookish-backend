@@ -96,7 +96,7 @@ const updateArray = (req, res) => {
               errorcode: 1
             });
             return;
-          } ;
+          };
         };
         foundClub.questions.push(req.body.question)
         foundClub.save((err, savedClub) => {
@@ -115,6 +115,13 @@ const updateArray = (req, res) => {
         res.status(200).json({club: savedClub})
       })
     } else if ("nomination" in req.body) {
+      let stringCurrentBook = String(foundClub.currentbook)
+      if (stringCurrentBook === req.body.nomination) {
+        res.status(500).send({
+          errorcode: 2
+        })
+        return;
+      };
       if (foundClub.nominations.length > 0) {
         for (let i = 0; i < foundClub.nominations.length; i++) {
           let stringNomination = String(foundClub.nominations[i])
@@ -124,6 +131,15 @@ const updateArray = (req, res) => {
             });
             return;
           } ;
+        };
+        for (let i = 0; i < foundClub.pastbooks.length; i++) {
+          let stringPastBook = String(foundClub.pastbooks[i])
+          if (stringPastBook === req.body.nomination) {
+            res.status(500).send({
+              errorcode: 3
+            });
+            return;
+          };
         };
         foundClub.nominations.push(req.body.nomination)
         foundClub.save((err, savedClub) => {
@@ -160,7 +176,6 @@ const deleteFromArray = (req, res) => {
   };  
 };      
 
-//Doesn't remove from clubsmember
 const destroy = (req, res) => {
   db.Club.findByIdAndDelete(req.params.id, (err, deletedClub) => {
     if (err) console.log("Error with Club delete", err)
