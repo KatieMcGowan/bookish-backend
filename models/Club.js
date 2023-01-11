@@ -7,7 +7,7 @@ const ClubSchema = new Schema({
   meetup: String,
   admin: { type: Schema.Types.ObjectId, ref: "User" },
   members: [ { type: Schema.Types.ObjectId, ref: "User" } ],
-  newbook: Boolean,
+  nextbook: Boolean,
   currentbook: { type: Schema.Types.ObjectId, ref: "Book" },
   pastbooks: [ { type: Schema.Types.ObjectId, ref: "Book" } ],
   questions: [ { type: String } ],

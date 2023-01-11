@@ -122,7 +122,12 @@ const updateArray = (req, res) => {
         })
         return;
       };
-      if (foundClub.nominations.length > 0) {
+      if (foundClub.nominations.length === 0 && foundClub.pastbooks.length === 0) {
+        foundClub.nominations.push(req.body.nomination)
+        foundClub.save((err, savedClub) => {
+          res.status(200).json({club: savedClub})
+        });
+      } else  {
         for (let i = 0; i < foundClub.nominations.length; i++) {
           let stringNomination = String(foundClub.nominations[i])
           if (stringNomination === req.body.nomination) {
@@ -141,11 +146,6 @@ const updateArray = (req, res) => {
             return;
           };
         };
-        foundClub.nominations.push(req.body.nomination)
-        foundClub.save((err, savedClub) => {
-          res.status(200).json({club: savedClub})
-        });
-      } else {
         foundClub.nominations.push(req.body.nomination)
         foundClub.save((err, savedClub) => {
           res.status(200).json({club: savedClub})
@@ -171,6 +171,7 @@ const deleteFromArray = (req, res) => {
     });
   } else if ("nomination" in req.body) {
     db.Club.findByIdAndUpdate(req.params.id, {$pull: {"nominations": `${req.body.nomination}`}}, {new: true}, (err, updatedClub) => {
+      if (err) console.log(err)
       res.status(200).json({club: updatedClub})
     });
   };  
