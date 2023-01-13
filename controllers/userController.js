@@ -84,7 +84,6 @@ const verify = (req, res) => {
       if(!passwordCheck) {
         return res.status(400).send({
           message: "Passwords do not match, password check failed",
-          error,
         })
       }
       const token = jwt.sign(
