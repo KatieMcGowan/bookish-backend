@@ -83,6 +83,7 @@ const verify = (req, res) => {
     .then((passwordCheck) => {
       if(!passwordCheck) {
         return res.status(400).send({
+          errorcode: 1,
           message: "Passwords do not match, password check failed",
         })
       }
