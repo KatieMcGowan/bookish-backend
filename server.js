@@ -3,17 +3,21 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const PORT = 4000
+const PORT = process.env.PORT || process.env.URL;
 const routes = require("./routes");
 
 //MIDDLEWARE
 app.use(express.json())
-app.use(cors());
+// app.use(cors());
 
 //ROUTES
 app.use("/users", routes.users)
 app.use("/clubs", routes.clubs)
 app.use("/books", routes.books)
+
+app.get("/", (req, res) => {
+  res.send("<h1>Bookish API</h1>")
+})
 
 //CORS
 // app.use((req, res, next) => {
