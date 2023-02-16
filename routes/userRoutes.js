@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const ctrl = require("../controllers")
-const auth = require("../auth")
+const auth = require("../controllers/auth")
 
 router.get("/", ctrl.users.index);
 router.get("/free-endpoint", ctrl.users.freeEndpoint)
