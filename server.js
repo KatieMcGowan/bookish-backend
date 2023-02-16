@@ -8,7 +8,9 @@ const routes = require("./routes");
 
 //MIDDLEWARE
 app.use(express.json())
-// app.use(cors());
+app.use(cors({
+  origin: "https://bookish-9kgt.onrender.com"
+}));
 
 //ROUTES
 app.use("/users", routes.users)
