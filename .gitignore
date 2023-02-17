@@ -1,4 +1,4 @@
 /node_modules
 .env
-/controllers/auth.js
-/controllers/config.js
+# /controllers/auth.js
+# /controllers/config.js
