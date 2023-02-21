@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 // const config = require("./config");
 require("dotenv").config();
 
+const userENV = process.env.USER
+
 const index = (req, res) => {
   db.User.find({}, (err, foundUsers) => {
     if (err) console.log("Error with User index", err)
@@ -19,7 +21,7 @@ const getid = (req, res) => {
   if (!token) {
     return res.status(401).send({auth: false, message: "No token provided."})
   }  
-  jwt.verify(token, process.env.SECRET/*config.secret*/, (err, decoded) => {
+  jwt.verify(token, userENV/*config.secret*/, (err, decoded) => {
     if (err) {
       return res.status(500).send({auth: false, message: "Failed to authenticate token."})
     }  
@@ -94,7 +96,7 @@ const verify = (req, res) => {
           userName: user.username,
           userDisplayName: user.displayname
         },
-        /*config.secret*/process.env.SECRET, 
+        /*config.secret*/userENV, 
         { expiresIn: "24h" }
       )
       res.status(200).send({
